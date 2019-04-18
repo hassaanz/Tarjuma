@@ -1,25 +1,43 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import Iframe from 'react-iframe'
+import Toolbar from './components/toolbar';
 import './App.css';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      toolbarOpen: false,
+      targetWeb: ''
+    }
+  }
+
+  toggleToolbar = () => {
+    this.setState((state) => ({toolbarOpen: !(state.toolbarOpen)}));
+  };
+  onWebChange = (url) => {
+    this.setState({targetWeb: url});
+  };
+
+  onToggleMarkers = () => {
+    window.frames[0].frameElement.contentWindow.tarjuma.log('Toggling Markers!', 'onToggleMarkers');
+  };
+
+  appLoaded = (ev) => {
+    console.log('Loaded!', ev);
+  };
+
   render() {
+    const {toolbarOpen, targetWeb} = this.state;
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <Toolbar
+          isOpen={toolbarOpen}
+          targetWeb={targetWeb}
+          setTarget={this.onWebChange}
+          onToggleMarkers={this.onToggleMarkers}
+        />
+        <Iframe url={targetWeb} id="targetPage" display="initial" onLoad={this.appLoaded} />
       </div>
     );
   }
